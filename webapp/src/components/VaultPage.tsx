@@ -31,7 +31,7 @@ import {
   type SidebarFilter,
   type VaultSortMode,
 } from '@/components/vault/vault-page-helpers';
-import { calcTotpNow } from '@/lib/crypto';
+import { calcTotpNow, type TotpCodeResult } from '@/lib/crypto';
 import { computeSshFingerprint, generateDefaultSshKeyMaterial } from '@/lib/ssh';
 import { ChevronLeft } from 'lucide-preact';
 import type { Cipher, CustomFieldType, Folder, VaultDraft, VaultDraftField } from '@/lib/types';
@@ -109,7 +109,7 @@ export default function VaultPage(props: VaultPageProps) {
   const [renameFolderName, setRenameFolderName] = useState('');
   const [pendingDeleteFolder, setPendingDeleteFolder] = useState<Folder | null>(null);
   const [deleteAllFoldersOpen, setDeleteAllFoldersOpen] = useState(false);
-  const [totpLive, setTotpLive] = useState<{ code: string; remain: number } | null>(null);
+  const [totpLive, setTotpLive] = useState<TotpCodeResult | null>(null);
   const [hiddenFieldVisibleMap, setHiddenFieldVisibleMap] = useState<Record<number, boolean>>({});
   const [attachmentQueue, setAttachmentQueue] = useState<File[]>([]);
   const [removedAttachmentIds, setRemovedAttachmentIds] = useState<Record<string, boolean>>({});

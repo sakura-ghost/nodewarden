@@ -2,11 +2,11 @@ import { createPortal } from 'preact/compat';
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { Archive, Clipboard, Download, Eye, EyeOff, ExternalLink, Folder, Paperclip, Pencil, RotateCcw, Trash2, X } from 'lucide-preact';
 import { useDialogLifecycle } from '@/components/ConfirmDialog';
+import type { TotpCodeResult } from '@/lib/crypto';
 import type { Cipher } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import {
   CardBrandIcon,
-  TOTP_PERIOD_SECONDS,
   TOTP_RING_CIRCUMFERENCE,
   VaultListIcon,
   copyToClipboard,
@@ -25,7 +25,7 @@ interface VaultDetailViewProps {
   selectedCipher: Cipher;
   repromptApprovedCipherId: string | null;
   showPassword: boolean;
-  totpLive: { code: string; remain: number } | null;
+  totpLive: TotpCodeResult | null;
   passkeyCreatedAt: string | null;
   hiddenFieldVisibleMap: Record<number, boolean>;
   folderName: (id: string | null | undefined) => string;
@@ -40,6 +40,11 @@ interface VaultDetailViewProps {
   onRestore: (cipher: Cipher) => void | Promise<void>;
   onArchive: (cipher: Cipher) => void | Promise<void>;
   onUnarchive: (cipher: Cipher) => void | Promise<void>;
+}
+
+function totpProgress(live: TotpCodeResult | null): number {
+  const period = Math.max(1, live?.period || 30);
+  return live ? Math.max(0, Math.min(period, live.remain)) / period : 0;
 }
 
 function PasswordHistoryDialog(props: {
@@ -191,8 +196,7 @@ export default function VaultDetailView(props: VaultDetailViewProps) {
                               strokeDasharray: `${TOTP_RING_CIRCUMFERENCE} ${TOTP_RING_CIRCUMFERENCE}`,
                               strokeDashoffset: String(
                                 TOTP_RING_CIRCUMFERENCE -
-                                  TOTP_RING_CIRCUMFERENCE *
-                                    (Math.max(0, Math.min(TOTP_PERIOD_SECONDS, props.totpLive?.remain ?? 0)) / TOTP_PERIOD_SECONDS)
+                                  TOTP_RING_CIRCUMFERENCE * totpProgress(props.totpLive)
                               ),
                             }}
                           />

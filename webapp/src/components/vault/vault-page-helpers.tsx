@@ -207,8 +207,7 @@ export function getWebsiteMatchOptions(): Array<{ value: number | null; label: s
   ];
 }
 
-export const TOTP_PERIOD_SECONDS = 30;
-export const TOTP_RING_RADIUS = 14;
+const TOTP_RING_RADIUS = 14;
 export const TOTP_RING_CIRCUMFERENCE = 2 * Math.PI * TOTP_RING_RADIUS;
 
 export function CreateTypeIcon({ type }: { type: number }) {
